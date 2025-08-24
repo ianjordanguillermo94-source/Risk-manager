@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risk Manager</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; background: #f4f4f9; }
+    h1 { color: #333; }
+    label { display: block; margin-top: 10px; }
+    input { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 10px; width: 100%; background: #007bff; color: white; border: none; border-radius: 5px; }
+    button:hover { background: #0056b3; }
+    .result { margin-top: 20px; padding: 15px; background: #fff; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>📊 Risk Manager</h1>
+  <label>Account Size (USDT):</label>
+  <input type="number" id="accountSize" placeholder="Enter account balance">
+
+  <label>Risk % per Trade:</label>
+  <input type="number" id="riskPercent" step="0.1" placeholder="e.g. 1">
+
+  <label>Entry Price:</label>
+  <input type="number" id="entryPrice" step="0.01" placeholder="e.g. 180.50">
+
+  <label>Stop Loss Price:</label>
+  <input type="number" id="stopLoss" step="0.01" placeholder="e.g. 178.90">
+
+  <button onclick="calculate()">Calculate Position Size</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function calculate() {
+      const accountSize = parseFloat(document.getElementById('accountSize').value);
+      const riskPercent = parseFloat(document.getElementById('riskPercent').value);
+      const entry = parseFloat(document.getElementById('entryPrice').value);
+      const stop = parseFloat(document.getElementById('stopLoss').value);
+
+      if (isNaN(accountSize) || isNaN(riskPercent) || isNaN(entry) || isNaN(stop)) {
+        document.getElementById('result').innerHTML = "⚠️ Please fill in all fields.";
+        return;
+      }
+
+      const riskAmount = (riskPercent / 100) * accountSize;
+      const difference = Math.abs(entry - stop);
+      if (difference === 0) {
+        document.getElementById('result').innerHTML = "⚠️ Stop loss and entry cannot be the same.";
+        return;
+      }
+
+      const positionSize = riskAmount / difference;
+      document.getElementById('result').innerHTML = `
+        ✅ Risk per trade: <b>${riskAmount.toFixed(2)} USDT</b><br>
+        ✅ Position size: <b>${positionSize.toFixed(4)} units</b><br>
+        📌 Entry: ${entry}, Stop Loss: ${stop}
+      `;
+    }
+  </script>
+</body>
+</html>
